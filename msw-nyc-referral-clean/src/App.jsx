@@ -144,23 +144,23 @@ function SvcPill({label,active,onClick}) {
 function LangPill({label,active,onClick}) {
   return <button onClick={onClick} style={{
     border:`1.5px solid ${active?C.teal:C.border}`,
-    background:active?C.tealLight:"transparent",
-    color:active?C.teal:C.textMid,
+    background:active?C.teal:C.surface,
+    color:active?"#fff":C.textMid,
     borderRadius:100, padding:"5px 14px", fontSize:12, fontWeight:active?600:400,
     cursor:"pointer", fontFamily:"'DM Sans',sans-serif", transition:"all 0.15s",
     marginBottom:6, whiteSpace:"nowrap",
-  }}>🗣 {label}</button>;
+  }}>{active && <span style={{marginRight:5,fontSize:10}}>✓</span>}{label}</button>;
 }
 
 function InsPill({label,active,onClick}) {
   return <button onClick={onClick} style={{
     border:`1.5px solid ${active?C.gold:"#DDD"}`,
-    background:active?C.goldLight:"transparent",
-    color:active?C.gold:C.textMid,
+    background:active?C.gold:C.surface,
+    color:active?"#fff":C.textMid,
     borderRadius:4, padding:"5px 13px", fontSize:12, fontWeight:active?600:400,
     cursor:"pointer", fontFamily:"'DM Sans',sans-serif", transition:"all 0.15s",
     marginBottom:6, whiteSpace:"nowrap", letterSpacing:0.2,
-  }}>💳 {label}</button>;
+  }}>{active && <span style={{marginRight:5,fontSize:10}}>✓</span>}{label}</button>;
 }
 
 function DetailRow({label,value}) {
@@ -194,7 +194,7 @@ function ResourceCard({r,highlight}) {
         </div>
         {r.address&&<div style={{fontSize:12,color:C.textLight,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>📍 {r.address}</div>}
         <div style={{marginBottom:5}}>{r.serviceTags.map(s=><Tag key={s} label={s}/>)}</div>
-        {r.languages.length>0&&<div style={{fontSize:12,color:C.textLight,fontFamily:"'DM Sans',sans-serif",marginTop:3}}>🗣 {r.languages.join(" · ")}</div>}
+        {r.languages.length>0&&<div style={{fontSize:12,color:C.textLight,fontFamily:"'DM Sans',sans-serif",marginTop:3}}>{r.languages.join(" · ")}</div>}
       </div>
       <div style={{width:26,height:26,borderRadius:"50%",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"transform 0.2s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke={C.textLight} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -356,7 +356,6 @@ export default function App() {
     <nav style={{background:C.surface,borderBottom:`1px solid ${C.border}`,padding:"0 24px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54,position:"sticky",top:0,zIndex:100}}>
       <div style={{fontFamily:"'DM Serif Display',Georgia,serif",fontSize:16,color:C.text}}>{t.community}</div>
       <div style={{display:"flex",gap:7,alignItems:"center"}}>
-        <a href={JOTFORM_URL} target="_blank" rel="noreferrer" style={{background:C.green,color:"#fff",border:"none",borderRadius:6,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",textDecoration:"none"}}>{t.addAgency}</a>
         {["en","zh"].map(l=><button key={l} onClick={()=>setLang(l)} style={{background:lang===l?C.green:"transparent",color:lang===l?"#fff":C.textMid,border:`1px solid ${lang===l?C.green:C.border}`,borderRadius:6,padding:"5px 11px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>{l==="en"?"EN":"中文"}</button>)}
       </div>
     </nav>
@@ -382,14 +381,17 @@ export default function App() {
 
       {/* Search */}
       <div style={{marginBottom:20}}>
-        <div style={{position:"relative",marginBottom:12}}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}}><circle cx="11" cy="11" r="8" stroke={C.textLight} strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke={C.textLight} strokeWidth="2" strokeLinecap="round"/></svg>
-          <input value={search} onChange={e=>{setSearch(e.target.value);setAiResults(null);}} placeholder={t.searchPlaceholder}
-            style={{width:"100%",border:`1px solid ${aiResults!==null?C.green:C.border}`,borderRadius:8,padding:"12px 40px",fontSize:14,color:C.text,background:C.surface,outline:"none",fontFamily:"'DM Sans',sans-serif",boxShadow:"0 1px 3px rgba(0,0,0,0.04)"}}
-            onFocus={e=>e.target.style.borderColor=C.green} onBlur={e=>e.target.style.borderColor=aiResults!==null?C.green:C.border}
-          />
-          {aiLoading&&<div style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)"}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{animation:"spin 1s linear infinite"}}><circle cx="12" cy="12" r="10" stroke={C.border} strokeWidth="3"/><path d="M22 12a10 10 0 0 0-10-10" stroke={C.green} strokeWidth="3" strokeLinecap="round"/></svg></div>}
-          {search&&!aiLoading&&<button onClick={()=>{setSearch("");setAiResults(null);setAiQuery("");}} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:C.textLight,cursor:"pointer",fontSize:18,lineHeight:1,padding:2}}>×</button>}
+        <div style={{display:"flex",gap:10,marginBottom:12,alignItems:"center"}}>
+          <div style={{position:"relative",flex:1}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}}><circle cx="11" cy="11" r="8" stroke={C.textLight} strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke={C.textLight} strokeWidth="2" strokeLinecap="round"/></svg>
+            <input value={search} onChange={e=>{setSearch(e.target.value);setAiResults(null);}} placeholder={t.searchPlaceholder}
+              style={{width:"100%",border:`1px solid ${aiResults!==null?C.green:C.border}`,borderRadius:8,padding:"12px 40px",fontSize:14,color:C.text,background:C.surface,outline:"none",fontFamily:"'DM Sans',sans-serif",boxShadow:"0 1px 3px rgba(0,0,0,0.04)"}}
+              onFocus={e=>e.target.style.borderColor=C.green} onBlur={e=>e.target.style.borderColor=aiResults!==null?C.green:C.border}
+            />
+            {aiLoading&&<div style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)"}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{animation:"spin 1s linear infinite"}}><circle cx="12" cy="12" r="10" stroke={C.border} strokeWidth="3"/><path d="M22 12a10 10 0 0 0-10-10" stroke={C.green} strokeWidth="3" strokeLinecap="round"/></svg></div>}
+            {search&&!aiLoading&&<button onClick={()=>{setSearch("");setAiResults(null);setAiQuery("");}} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:C.textLight,cursor:"pointer",fontSize:18,lineHeight:1,padding:2}}>×</button>}
+          </div>
+          <a href={JOTFORM_URL} target="_blank" rel="noreferrer" style={{background:C.green,color:"#fff",borderRadius:8,padding:"12px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",textDecoration:"none",whiteSpace:"nowrap",flexShrink:0}}>{t.addAgency}</a>
         </div>
         {aiLoading&&<div style={{fontSize:12,color:C.sage,marginBottom:8,display:"flex",alignItems:"center",gap:5}}><span style={{width:5,height:5,borderRadius:"50%",background:C.sage,display:"inline-block"}}/>{t.aiSearching}</div>}
         {aiResults!==null&&!aiLoading&&<div style={{fontSize:12,color:C.green,fontWeight:500,marginBottom:8}}>✦ {t.aiResultsFor(aiQuery)}</div>}
