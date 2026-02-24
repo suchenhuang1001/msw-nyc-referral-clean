@@ -62,23 +62,23 @@ function parseCSV(text) {
       else cur+=ch;
     }
     cols.push(cur.trim());
-    const name = cols[0]||"";
+    const name = cols[1]||"";
     if (!name || name==="Agency" || name==="Agency & Department Name") continue;
-    const svcText = cols[2]||"";
+    const svcText = cols[3]||"";
     const tags = Object.keys(TAG_STYLE).filter(s=>s!=="General Services"&&svcText.toLowerCase().includes(s.toLowerCase()));
     out.push({
       id: Math.random().toString(36).slice(2),
       sheetRow: li+1,
       orgName: name,
-      address: cols[1]||"",
+      address: cols[2]||"",
       serviceText: svcText,
       serviceTags: tags.length>0?tags:["General Services"],
-      languages: (cols[3]||"").split(/[\n,\/;·]+/).map(l=>l.trim()).filter(Boolean),
-      insurance: cols[4]||"",
-      referral:  cols[5]||"",
+      languages: (cols[4]||"").split(/[\n,\/;·]+/).map(l=>l.trim()).filter(Boolean),
+      insurance: cols[5]||"",
       contact:   cols[6]||"",
-      waitlist:  cols[7]||"",
-      notes:     cols[8]||"",
+      referral:  cols[7]||"",
+      waitlist:  cols[8]||"",
+      notes:     cols[9]||"",
     });
   }
   return out;
