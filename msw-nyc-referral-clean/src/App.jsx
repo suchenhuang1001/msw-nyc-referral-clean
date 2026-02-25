@@ -52,16 +52,31 @@ const TAG_STYLE = {
 };
 
 function parseCSV(text) {
-  const lines = text.trim().split("\n");
-  const out = [];
-  for (let li = 1; li < lines.length; li++) {
-    const cols = []; let cur = "", inQ = false;
-    for (const ch of lines[li]) {
-      if (ch==='"') inQ=!inQ;
-      else if (ch===',' && !inQ) { cols.push(cur.trim()); cur=""; }
-      else cur+=ch;
+  // Robust parser that handles newlines inside quoted fields
+  const rows = [];
+  let cur = "", inQ = false, row = [];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQ && text[i+1] === '"') { cur += '"'; i++; } // escaped quote
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      row.push(cur.trim()); cur = "";
+    } else if ((ch === '\n') && !inQ) {
+      row.push(cur.trim()); cur = "";
+      rows.push(row); row = [];
+    } else if (ch === '\r') {
+      // skip carriage return
+    } else {
+      cur += ch;
     }
-    cols.push(cur.trim());
+  }
+  if (cur || row.length) { row.push(cur.trim()); rows.push(row); }
+
+  const out = [];
+  // rows[0] = first header row (Agency Types, Agency, Address...)
+  for (let li = 1; li < rows.length; li++) {
+    const cols = rows[li];
     const name = cols[1]||"";
     if (!name || name==="Agency" || name==="Agency & Department Name") continue;
     const svcText = cols[3]||"";
