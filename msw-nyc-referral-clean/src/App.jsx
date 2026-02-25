@@ -221,12 +221,18 @@ function ResourceCard({r,highlight}) {
     </div>
 
     {/* Quick links */}
-    {hasLinks&&<div style={{marginTop:11,paddingTop:11,borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",flexWrap:"wrap",gap:6}}>
-      <span style={{fontSize:10,fontWeight:600,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif"}}>Refer now:</span>
-      {links.phones.map(p=><LinkChip key={p} href={`tel:${p.replace(/\D/g,"")}`} bg={C.greenLight} color={C.green} label={`Call ${p}`} icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.42 1.18 2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.13 6.13l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke={C.green} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}/>)}
-      {links.emails.map(e=><LinkChip key={e} href={`mailto:${e}`} bg={C.tealLight} color={C.teal} label="Email" icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="22,6 12,13 2,6" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}/>)}
-      {links.urls.slice(0,1).map(u=><LinkChip key={u} href={u.startsWith("http")?u:`https://${u}`} bg="#EDEBE6" color={C.textMid} label="Website" icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="15,3 21,3 21,9" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="10" y1="14" x2="21" y2="3" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}/>)}
-    </div>}
+    {(() => {
+      const allUrls = [...new Set([...(r.nameUrl?[r.nameUrl]:[]), ...links.urls])];
+      const hasAny = links.phones.length>0||links.emails.length>0||allUrls.length>0;
+      if (!hasAny) return null;
+      const webIcon = <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="15,3 21,3 21,9" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="10" y1="14" x2="21" y2="3" stroke={C.textMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+      return <div style={{marginTop:11,paddingTop:11,borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",flexWrap:"wrap",gap:6}}>
+        <span style={{fontSize:10,fontWeight:600,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif"}}>Refer now:</span>
+        {links.phones.map(p=><LinkChip key={p} href={`tel:${p.replace(/\D/g,"")}`} bg={C.greenLight} color={C.green} label={`Call ${p}`} icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.42 1.18 2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.13 6.13l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke={C.green} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}/>)}
+        {links.emails.map(e=><LinkChip key={e} href={`mailto:${e}`} bg={C.tealLight} color={C.teal} label="Email" icon={<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="22,6 12,13 2,6" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}/>)}
+        {allUrls.map(u=><LinkChip key={u} href={u.startsWith("http")?u:`https://${u}`} bg="#EDEBE6" color={C.textMid} label="Website" icon={webIcon}/>)}
+      </div>;
+    })()}
 
     {/* Expanded details */}
     {open&&<div style={{marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`,display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 24px"}}>
@@ -399,8 +405,8 @@ export default function App() {
     {/* MAIN */}
     <div style={{maxWidth:780,margin:"0 auto",padding:"26px 16px 60px"}}>
 
-      {/* Search */}
-      <div style={{marginBottom:20}}>
+      {/* Search + Filters — card */}
+      <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:14,padding:"20px 20px 14px",marginBottom:20,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}}>
         <div style={{display:"flex",gap:10,marginBottom:12,alignItems:"center"}}>
           <div style={{position:"relative",flex:1}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}}><circle cx="11" cy="11" r="8" stroke={C.textLight} strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke={C.textLight} strokeWidth="2" strokeLinecap="round"/></svg>
@@ -439,6 +445,7 @@ export default function App() {
             {insOpts.map(f=><InsPill key={f} label={f} active={insFilters.has(f)} onClick={()=>toggleSet(setInsFilters,f)}/>)}
           </div>
         </div>
+      </div>
       </div>
 
       {/* Results bar */}
