@@ -81,10 +81,14 @@ function parseCSV(text) {
     if (!name || name==="Agency" || name==="Agency & Department Name") continue;
     const svcText = cols[3]||"";
     const tags = Object.keys(TAG_STYLE).filter(s=>s!=="General Services"&&svcText.toLowerCase().includes(s.toLowerCase()));
+    // Strip URLs out of agency name
+    const urlInName = (name.match(/https?:\/\/[^\s]+/) || [])[0] || "";
+    const cleanName = name.replace(/https?:\/\/[^\s]+/g, "").replace(/\n+/g," ").trim();
     out.push({
       id: Math.random().toString(36).slice(2),
       sheetRow: li+1,
-      orgName: name,
+      orgName: cleanName,
+      nameUrl: urlInName,
       address: cols[2]||"",
       serviceText: svcText,
       serviceTags: tags.length>0?tags:["General Services"],
@@ -204,7 +208,7 @@ function ResourceCard({r,highlight}) {
     <div onClick={()=>setOpen(o=>!o)} style={{cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:14}}>
       <div style={{flex:1,minWidth:0}}>
         <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:4}}>
-          <span style={{fontFamily:"'DM Serif Display',Georgia,serif",fontSize:17,color:C.text,lineHeight:1.3}}>{r.orgName}</span>
+          <span style={{fontFamily:"'DM Serif Display',Georgia,serif",fontSize:17,color:C.text,lineHeight:1.3,wordBreak:"break-word",overflowWrap:"anywhere"}}>{r.orgName}</span>
           {r.waitlist&&<WaitBadge w={r.waitlist}/>}
         </div>
         {r.address&&<div style={{fontSize:12,color:C.textLight,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>📍 {r.address}</div>}
@@ -231,6 +235,7 @@ function ResourceCard({r,highlight}) {
       <DetailRow label="Referral Contact" value={r.contact}/>
       <div style={{gridColumn:"1/-1"}}><DetailRow label="How to Refer" value={r.referral}/></div>
       {r.notes&&<div style={{gridColumn:"1/-1"}}><DetailRow label="Notes" value={r.notes}/></div>}
+      {r.nameUrl&&<div style={{gridColumn:"1/-1"}}><DetailRow label="Website" value={r.nameUrl}/></div>}
       <div style={{gridColumn:"1/-1",marginTop:6,paddingTop:10,borderTop:`1px solid ${C.border}`}}>
         <a href={`https://docs.google.com/spreadsheets/d/${SHEET_ID}`} target="_blank" rel="noreferrer"
           style={{fontSize:12,color:C.textLight,fontFamily:"'DM Sans',sans-serif",textDecoration:"underline"}}>
