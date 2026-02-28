@@ -186,7 +186,7 @@ function DetailRow({label,value}) {
   if(!value) return null;
   return <div style={{marginBottom:14}}>
     <div style={{fontSize:10,fontWeight:600,letterSpacing:1.2,textTransform:"uppercase",color:C.textLight,marginBottom:3,fontFamily:"'DM Sans',sans-serif"}}>{label}</div>
-    <div style={{fontSize:13,color:C.text,lineHeight:1.65,fontFamily:"'DM Sans',sans-serif",whiteSpace:"pre-line"}}>{value}</div>
+    <div style={{fontSize:13,color:C.text,lineHeight:1.65,fontFamily:"'DM Sans',sans-serif",whiteSpace:"pre-line",wordBreak:"break-word",overflowWrap:"anywhere"}}>{value}</div>
   </div>;
 }
 
